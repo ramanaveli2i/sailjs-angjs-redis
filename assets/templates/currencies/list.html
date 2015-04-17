@@ -1,0 +1,86 @@
+<div class="container">
+  <div class="row">
+    <ul class="col-md-4 list-group">
+      <li class="list-group-item" ng-repeat="currency in currencies">
+        {{currency.name}}
+        <span class="badge">
+          <span class="delete-button" ng-click="deleteMessage(currency)">X</span>
+        </span>
+      </li>
+    </ul>
+
+    <form name="currencyForm" novalidate class="col-md-4">
+    <div class="form-group">
+    <input type="text" class="form-control" placeholder="ISO ID" name="iso_id" ng-model="currency.iso_id" required>
+    <div ng-show="currencyForm.iso_id.$dirty" ng-messages="currencyForm.iso_id.$error">
+      <div ng-message="required">
+        Please Enter currency Id
+      </div>
+    </div>
+  </div>
+  
+  <div class="form-group">
+    <div class="checkbox">
+    <label>
+      <input ng-init="currency.active=true" type="checkbox" name="active" ng-model="currency.active"> Active
+    </label>
+  </div>
+  </div>
+  
+  
+  
+  <div class="form-group">
+    <input type="number" class="form-control" placeholder="Balance" name="balance" ng-model="currency.balance">
+    <div ng-show="currencyForm.balance.$dirty" ng-messages="currencyForm.balance.$error">
+      <div ng-message="number">
+       Should be a Number
+      </div>
+    </div>
+  </div>
+  
+  <div class="form-group">
+    <input type="number" class="form-control" placeholder="Ex Diff" name="exdiff" ng-model="currency.exdiff">
+    <div ng-show="currencyForm.exdiff.$dirty" ng-messages="currencyForm.exdiff.$error">
+      <div ng-message="number">
+       Should be a Number
+      </div>
+    </div>
+  </div>
+  
+  <div class="form-group">
+    <input id="exdiffdate" type="text" class="form-control" placeholder="Ex Diff Date" name="exdiffdate" ng-model="currency.exdiffdate">
+  </div>
+  <div class="form-group">
+    <input type="number" class="form-control" placeholder="local Balance" name="localbalance" ng-model="currency.localbalance">
+    <div ng-show="currencyForm.localbalance.$dirty" ng-messages="currencyForm.localbalance.$error">
+      <div ng-message="number">
+       Should be a Number
+      </div>
+    </div>
+  </div>
+     <div class="form-group">
+    <input type="text" class="form-control" placeholder="Name" name="name" ng-model="currency.name" required>
+    <div ng-show="currencyForm.name.$dirty" ng-messages="currencyForm.name.$error">
+      <div ng-message="required">
+        Enter your Name
+      </div>
+    </div>
+  </div>
+  <div class="form-group">
+    <input type="number" class="form-control" placeholder="Organisation" name="organisation" ng-model="currency.organisation" required>
+    <div ng-show="currencyForm.organisation.$dirty" ng-messages="currencyForm.organisation.$error">
+      <div ng-message="required">
+        Should be a Number
+      </div>
+    </div>
+  </div>
+  <div class="form-group">
+    <input type="number" class="form-control" placeholder="Organisation" name="organisation" ng-model="currency.organisation" required>
+    <div ng-show="currencyForm.organisation.$dirty" ng-messages="currencyForm.organisation.$error">
+      <div ng-message="required">
+        Should be a Number
+      </div>
+    </div>
+  </div>
+    </form>
+  </div>
