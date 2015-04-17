@@ -2,8 +2,7 @@ angular.module('app')
   .factory('Currencies', function($http) {
     return {
       getAll: function() {
-        console.log(" --------- GET ALL ------------- ");
-        return $http.get('/currencies');
+        return $http.get('/currencies/getAll');
       },
       create: function(currency) {
         return $http.post('/currencies', {body: currency});
