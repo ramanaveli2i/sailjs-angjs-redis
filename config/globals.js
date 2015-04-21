@@ -8,10 +8,13 @@
  * For more information on configuration, check out:
  * http://links.sailsjs.org/docs/config/globals
  */
+var redisManager = require('./redisManager');
+
 module.exports.globals = {
 	_: true,
 	async: true,
 	sails: true,
 	services: true,
-	models: true
+	models: true,
+	redisManagerVar: redisManager.init(),
 };

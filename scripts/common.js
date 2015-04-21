@@ -79,6 +79,12 @@ function getErrorcode(errorcode) {
   case 1023:
     desc = "Email already exists";
     break;
+  case 1024:
+    desc = "Currency code already exists";
+    break;
+  case 1025:
+    desc = "Currency not found";
+    break;
   default:
     desc = "Unknown reason";
   }
@@ -171,4 +177,57 @@ exports.registerCommonScripts = function () {
   end \
   return 0 \
   ';
+  
+  /*
+   * scriptnewcurrency
+   * params: brokerid, currencyid, active, balance, exdiff, exdiffDate, localBalance, name, rateFrom, rateTo
+   * returns: {errorcode, currencyid}, errorcode=0 is ok, otherwise error
+   */
+   exports.scriptnewcurrency = stringsplit + '\
+   --[[ check email is unique ]] \
+   local currencycodeexists = redis.call("get", "currency:" .. ARGV[2]) \
+   if currencycodeexists then return {1024} end \
+   local currencyid = redis.call("incr", "currencyid") \
+   if not currencyid then return {1005} end \
+   --[[ store the currency ]] \
+   redis.call("hmset", "currency:" .. currencyid, "currencyid", currencyid, "brokerid", ARGV[1], "currencyid", ARGV[2], "active", ARGV[3], "balance", ARGV[4], "exdiff", ARGV[5], "exdiffdate", ARGV[6], "localbalance", ARGV[7], "name", ARGV[8], "ratefrom", ARGV[9], "rateto", ARGV[10]) \
+   --[[ add to set of currencies ]] \
+   redis.call("sadd", "currencies", currencyid) \
+   --[[ add route to find currency from email ]] \
+   redis.call("set", "currency:" .. ARGV[2], currencyid) \
+   return {0, currencyid} \
+   ';
+   
+   /*
+    * scriptupdatecurrency
+    * params: currencyid, brokerid, active, ratefrom, rateto
+    * returns: errorcode, 0=ok, otherwise error
+    */
+    exports.scriptupdatecurrency = stringsplit + '\
+    local currencykey = "currency:" .. ARGV[1] \
+    --[[ get existing currency]] \
+    local currency = redis.call("hget", currencykey, "currencyid") \
+    if not currency then return 1025 end \
+    --[[ update currency ]] \
+    redis.call("hmset", currencykey,  "brokerid", ARGV[2], "active", ARGV[3], "ratefrom", ARGV[4], "rateto", ARGV[5]) \
+    return 0 \
+    ';
+    
+    /*
+     * scriptdeletecurrency
+     * params: currencyid, brokerid
+     * returns: errorcode, 0=ok, otherwise error
+     */
+     exports.scriptdeletecurrency = stringsplit + '\
+     local currencykey = "currency:" .. ARGV[1] \
+     --[[ get existing currency]] \
+     local currency = redis.call("hget", currencykey, "currencyid") \
+     if not currency then return 1025 end \
+     --[[ update currency ]] \
+     redis.call("hdel", currencykey, "currencyid", "brokerid", "active" ,"balance", "exdiff", "exdiffdate", "localbalance", "name", "ratefrom", "rateto") \
+     redis.call("srem", "currencies", ARGV[1] ) \
+     redis.call("del", "currency:" .. currency) \
+     return 0 \
+     ';
+
 };
